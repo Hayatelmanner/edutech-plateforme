@@ -2,8 +2,12 @@
 // Centralized Axios instance: adds JWT to every request automatically.
 import axios from 'axios';
 
+// ⚙️ URL dynamique : utilise VITE_API_URL en production (Vercel),
+//    fallback sur localhost en développement local.
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: API_BASE_URL,
 });
 
 // Attach token from localStorage to each request
@@ -31,7 +35,9 @@ api.interceptors.response.use(
   }
 );
 
-// Base URL for static files (PDFs)
-export const FILES_URL = 'http://localhost:5000/uploads';
+// 📂 Base URL pour les fichiers statiques (PDFs uploadés)
+// Dérivée automatiquement de l'URL de l'API (sans le /api final)
+const SERVER_BASE = API_BASE_URL.replace(/\/api\/?$/, '');
+export const FILES_URL = `${SERVER_BASE}/uploads`;
 
 export default api;

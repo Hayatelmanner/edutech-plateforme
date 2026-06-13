@@ -290,3 +290,4 @@ INSERT INTO users (full_name, email, password, role, subject_specialty) VALUES
  '$2b$10$DGAeXewJ6ue15X/M.fxBjOPhKyeMoi67JWHHgcfKSpDgHAYl1mUiW',
  'teacher',
  'Mathématiques');
+a
