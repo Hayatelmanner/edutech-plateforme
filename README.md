@@ -96,13 +96,13 @@ git --version # doit afficher git version 2.x.x
 
 #### Option A : Cloner avec Git (recommandé)
 ```bash
-git clone https://github.com/VOTRE-USERNAME/edutech.git
-cd edutech
+git clone https://github.com/Hayatelmanner/edutech-plateforme.git
+cd edutech-plateforme
 ```
 
 #### Option B : Télécharger en ZIP
 1. Sur la page GitHub du projet → bouton vert **"Code"** → **"Download ZIP"**
-2. Décompresser le ZIP dans un dossier (ex : `C:\edutech\`)
+2. Décompresser le ZIP dans un dossier (ex : `C:\edutech-plateforme\`)
 3. Ouvrir un terminal dans ce dossier
 
 ---
