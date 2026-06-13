@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traduis en Binaire — Ressource Pédagogique</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .binary-learning-container {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #eef2ff 0%, #ede9fe 40%, #e0e7ff 100%);
+            min-height: 100vh;
+            padding: 0;
+            box-sizing: border-box;
+            color: #1e1b4b;
+            position: relative;
+            overflow-x: hidden;
+        }
+        .binary-learning-container *, .binary-learning-container *::before, .binary-learning-container *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        .blc-header {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(99,102,241,0.12);
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .blc-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: #4f46e5;
+        }
+        .blc-logo i {
+            font-size: 1.4rem;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .blc-stats {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .blc-score {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #f59e0b;
+            background: #fffbeb;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid #fde68a;
+        }
+        .blc-score i { font-size: 0.9rem; }
+        .blc-progress-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+        .blc-progress-bar {
+            width: 120px;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .blc-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .blc-screen {
+            display: none;
+            padding: 40px 24px 60px;
+            max-width: 860px;
+            margin: 0 auto;
+            animation: blcFadeIn 0.4s ease;
+        }
+        .blc-screen.blc-active { display: block; }
+        @keyframes blcFadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .blc-title {
+            font-size: 2rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        .blc-subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 1.05rem;
+            margin-bottom: 36px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .blc-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        .blc-btn:active { transform: scale(0.96); }
+        .blc-btn-primary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+        }
+        .blc-btn-primary:hover { box-shadow: 0 6px 20px rgba(99,102,241,0.5); transform: translateY(-1px); }
+        .blc-btn-secondary {
+            background: #fff;
+            color: #4f46e5;
+            border: 2px solid #e0e7ff;
+        }
+        .blc-btn-secondary:hover { background: #f5f3ff; border-color: #c7d2fe; }
+        .blc-btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(16,185,129,0.3);
+        }
+        .blc-btn-center {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
+        /* INTRO */
+        .blc-intro-hero { text-align: center; margin-bottom: 40px; }
+        .blc-lamps-section {
+            background: #fff; border-radius: 20px; padding: 32px 24px;
+            box-shadow: 0 4px 24px rgba(99,102,241,0.08); margin-bottom: 28px;
+        }
+        .blc-lamps-title { font-size: 1.05rem; font-weight: 600; color: #475569; margin-bottom: 6px; }
+        .blc-lamps-subtitle { font-size: 0.82rem; color: #94a3b8; margin-bottom: 24px; }
+        .blc-lamps-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+        .blc-lamp { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
+        .blc-lamp-weight { font-size: 0.7rem; font-weight: 600; color: #94a3b8; }
+        .blc-lamp-bulb {
+            width: 48px; height: 48px; border-radius: 50%; background: #e2e8f0;
+            border: 3px solid #cbd5e1; transition: all 0.35s ease; position: relative;
+        }
+        .blc-lamp-bulb.blc-on {
+            background: #fbbf24; border-color: #f59e0b;
+            box-shadow: 0 0 18px rgba(251,191,36,0.6), 0 0 40px rgba(251,191,36,0.2);
+        }
+        .blc-lamp-bulb.blc-on::after {
+            content: ''; position: absolute; inset: 6px; border-radius: 50%;
+            background: radial-gradient(circle, #fff 0%, transparent 70%); opacity: 0.5;
+        }
+        .blc-lamp-bit { font-size: 0.75rem; font-weight: 700; color: #64748b; min-width: 16px; text-align: center; }
+        .blc-lamp-bit.blc-on { color: #f59e0b; }
+        .blc-lamp-result {
+            text-align: center; font-size: 1.1rem; font-weight: 600; color: #4f46e5;
+            padding-top: 12px; border-top: 1px dashed #e2e8f0;
+        }
+        .blc-lamp-demo-label { text-align: center; font-size: 0.8rem; color: #94a3b8; margin-top: 8px; font-style: italic; }
+        .blc-intro-text {
+            background: #fff; border-radius: 16px; padding: 24px 28px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04); line-height: 1.7; color: #475569; font-size: 0.95rem;
+        }
+        .blc-intro-text strong { color: #4f46e5; }
+        .blc-onoff-badges { display: flex; justify-content: center; gap: 24px; margin: 16px 0 4px; }
+        .blc-badge { display: flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: 10px; font-weight: 600; font-size: 0.9rem; }
+        .blc-badge-off { background: #f1f5f9; color: #64748b; }
+        .blc-badge-on { background: #fffbeb; color: #d97706; }
+        .blc-badge-dot { width: 14px; height: 14px; border-radius: 50%; }
+        .blc-badge-dot-off { background: #94a3b8; }
+        .blc-badge-dot-on { background: #fbbf24; box-shadow: 0 0 8px rgba(251,191,36,0.5); }
+
+        /* UNITÉS */
+        .blc-units-grid { display: flex; flex-direction: column; gap: 14px; margin-bottom: 12px; }
+        .blc-unit-card {
+            background: #fff; border-radius: 16px; padding: 20px 24px; display: flex; align-items: center;
+            gap: 18px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 10px rgba(0,0,0,0.04); border: 2px solid transparent;
+        }
+        .blc-unit-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99,102,241,0.1); border-color: #e0e7ff; }
+        .blc-unit-card.blc-expanded { border-color: #c7d2fe; background: #faf5ff; }
+        .blc-unit-icon {
+            width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center;
+            justify-content: center; font-size: 1.3rem; color: #fff; flex-shrink: 0;
+        }
+        .blc-unit-icon-1 { background: linear-gradient(135deg, #6366f1, #818cf8); }
+        .blc-unit-icon-2 { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+        .blc-unit-icon-3 { background: linear-gradient(135deg, #a855f7, #c084fc); }
+        .blc-unit-icon-4 { background: linear-gradient(135deg, #c084fc, #d8b4fe); }
+        .blc-unit-icon-5 { background: linear-gradient(135deg, #d946ef, #e879f9); }
+        .blc-unit-info { flex: 1; }
+        .blc-unit-name { font-size: 1.05rem; font-weight: 700; color: #1e1b4b; }
+        .blc-unit-def { font-size: 0.82rem; color: #64748b; margin-top: 2px; }
+        .blc-unit-arrow { color: #c7d2fe; font-size: 1.1rem; transition: transform 0.3s; }
+        .blc-unit-card.blc-expanded .blc-unit-arrow { transform: rotate(90deg); color: #6366f1; }
+        .blc-unit-detail {
+            max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease;
+            color: #64748b; font-size: 0.88rem; line-height: 1.6;
+        }
+        .blc-unit-card.blc-expanded .blc-unit-detail { max-height: 200px; padding-top: 14px; }
+        .blc-unit-chain { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 20px 0 8px; flex-wrap: wrap; }
+        .blc-chain-node { background: #fff; border: 2px solid #e0e7ff; border-radius: 10px; padding: 8px 16px; font-weight: 700; font-size: 0.85rem; color: #4f46e5; }
+        .blc-chain-arrow { color: #c7d2fe; font-size: 0.9rem; }
+
+        /* NIVEAUX */
+        .blc-levels-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin-bottom: 24px; }
+        .blc-level-card {
+            background: #fff; border-radius: 18px; padding: 28px 22px; text-align: center;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.05); border: 2px solid transparent;
+            cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .blc-level-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(99,102,241,0.12); border-color: #c7d2fe; }
+        .blc-level-card.blc-completed { border-color: #86efac; }
+        .blc-level-completed-badge {
+            position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 50%;
+            background: #22c55e; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;
+        }
+        .blc-level-icon {
+            width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center;
+            justify-content: center; font-size: 1.5rem; margin: 0 auto 16px; color: #fff;
+        }
+        .blc-level-icon-1 { background: linear-gradient(135deg, #6366f1, #818cf8); }
+        .blc-level-icon-4 { background: linear-gradient(135deg, #ec4899, #f472b6); }
+        .blc-level-num { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; margin-bottom: 6px; }
+        .blc-level-name { font-size: 1.1rem; font-weight: 700; color: #1e1b4b; margin-bottom: 8px; }
+        .blc-level-desc { font-size: 0.82rem; color: #64748b; line-height: 1.5; margin-bottom: 14px; }
+        .blc-level-diff { display: flex; justify-content: center; gap: 3px; }
+        .blc-level-diff i { font-size: 0.7rem; color: #e2e8f0; }
+        .blc-level-diff i.blc-filled { color: #fbbf24; }
+        .blc-levels-links { display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; margin-bottom: 8px; }
+        .blc-levels-links a { color: #8b5cf6; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: color 0.2s; }
+        .blc-levels-links a:hover { color: #7c3aed; text-decoration: underline; }
+
+        /* JEU */
+        .blc-game-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 10px; }
+        .blc-game-level-name { font-size: 0.85rem; font-weight: 600; color: #6366f1; text-transform: uppercase; letter-spacing: 0.06em; }
+        .blc-game-counter { font-size: 0.85rem; color: #94a3b8; font-weight: 500; }
+        .blc-question-box {
+            background: #fff; border-radius: 20px; padding: 36px 28px; text-align: center;
+            box-shadow: 0 4px 24px rgba(99,102,241,0.08); margin-bottom: 24px;
+        }
+        .blc-question-label { font-size: 0.82rem; color: #94a3b8; font-weight: 500; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+        .blc-question-value { font-size: 3rem; font-weight: 800; color: #1e1b4b; line-height: 1.1; margin-bottom: 4px; }
+        .blc-question-hint { font-size: 0.82rem; color: #a5b4fc; margin-top: 8px; }
+        .blc-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 540px; margin: 0 auto; }
+        .blc-option-btn {
+            background: #fff; border: 2px solid #e2e8f0; border-radius: 14px; padding: 18px 16px;
+            font-family: 'Courier New', monospace; font-size: 1.2rem; font-weight: 700; color: #334155;
+            cursor: pointer; transition: all 0.2s ease; text-align: center; position: relative;
+        }
+        .blc-option-btn:hover:not(.blc-disabled) { border-color: #a5b4fc; background: #f5f3ff; transform: translateY(-2px); }
+        .blc-option-btn.blc-correct { border-color: #22c55e; background: #f0fdf4; color: #166534; animation: blcPulse 0.4s ease; }
+        .blc-option-btn.blc-wrong { border-color: #ef4444; background: #fef2f2; color: #991b1b; animation: blcShake 0.4s ease; }
+        .blc-option-btn.blc-disabled { cursor: default; opacity: 0.6; }
+        .blc-option-btn.blc-correct.blc-disabled, .blc-option-btn.blc-wrong.blc-disabled { opacity: 1; }
+        @keyframes blcPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.04)} }
+        @keyframes blcShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+        .blc-option-letter { position: absolute; top: 8px; left: 12px; font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 600; color: #94a3b8; }
+
+        /* MÉMOIRE */
+        .blc-memory-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; max-width: 560px; margin: 0 auto 20px; }
+        .blc-memory-card { aspect-ratio: 1; perspective: 800px; cursor: pointer; }
+        .blc-memory-inner { width: 100%; height: 100%; position: relative; transition: transform 0.5s ease; transform-style: preserve-3d; }
+        .blc-memory-card.blc-flipped .blc-memory-inner, .blc-memory-card.blc-matched .blc-memory-inner { transform: rotateY(180deg); }
+        .blc-memory-face {
+            position: absolute; inset: 0; backface-visibility: hidden; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center; font-weight: 700; text-align: center; padding: 6px; line-height: 1.2;
+        }
+        .blc-memory-front { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; font-size: 1.4rem; }
+        .blc-memory-back { transform: rotateY(180deg); background: #fff; border: 2px solid #e0e7ff; color: #1e1b4b; font-size: 0.82rem; }
+        .blc-memory-card.blc-matched .blc-memory-back { background: #f0fdf4; border-color: #86efac; color: #166534; }
+        .blc-memory-stats { display: flex; justify-content: center; gap: 28px; font-size: 0.85rem; color: #64748b; font-weight: 500; }
+        .blc-memory-stats span { color: #4f46e5; font-weight: 700; }
+
+        /* RÉSULTAT */
+        .blc-result-card { background: #fff; border-radius: 24px; padding: 44px 32px; text-align: center; box-shadow: 0 8px 40px rgba(99,102,241,0.1); max-width: 440px; margin: 0 auto; }
+        .blc-result-icon { font-size: 3.5rem; margin-bottom: 16px; }
+        .blc-result-score { font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, #f59e0b, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; }
+        .blc-result-label { font-size: 0.85rem; color: #94a3b8; margin-bottom: 18px; }
+        .blc-result-stars { display: flex; justify-content: center; gap: 6px; margin-bottom: 16px; }
+        .blc-result-stars i { font-size: 1.6rem; color: #e2e8f0; }
+        .blc-result-stars i.blc-earned { color: #fbbf24; }
+        .blc-result-msg { font-size: 1.05rem; color: #475569; margin-bottom: 28px; font-weight: 500; }
+
+        /* CONVERTISSEUR */
+        .blc-conv-input-area { background: #fff; border-radius: 18px; padding: 24px; box-shadow: 0 2px 16px rgba(0,0,0,0.04); margin-bottom: 24px; }
+        .blc-conv-input-wrap label { display: block; font-size: 0.82rem; font-weight: 600; color: #475569; margin-bottom: 8px; }
+        .blc-conv-input {
+            width: 100%; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 12px;
+            font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 600; color: #1e1b4b; outline: none; transition: border-color 0.2s;
+        }
+        .blc-conv-input:focus { border-color: #a5b4fc; }
+        .blc-conv-input.blc-error { border-color: #fca5a5; background: #fef2f2; }
+        .blc-conv-error-msg { font-size: 0.78rem; color: #ef4444; margin-top: 6px; min-height: 18px; }
+        .blc-conv-examples { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+        .blc-conv-ex-btn {
+            padding: 6px 14px; background: #f5f3ff; border: 1px solid #e0e7ff; border-radius: 8px;
+            font-family: inherit; font-size: 0.8rem; font-weight: 600; color: #6366f1; cursor: pointer; transition: all 0.2s;
+        }
+        .blc-conv-ex-btn:hover { background: #ede9fe; border-color: #c7d2fe; }
+        .blc-conv-result-area { background: #fff; border-radius: 18px; padding: 28px 24px; box-shadow: 0 2px 16px rgba(0,0,0,0.04); margin-bottom: 24px; min-height: 100px; }
+        .blc-conv-result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
+        .blc-conv-result-title { font-size: 0.9rem; font-weight: 700; color: #475569; }
+        .blc-conv-bits-info { display: flex; gap: 10px; flex-wrap: wrap; }
+        .blc-conv-info-chip { font-size: 0.75rem; font-weight: 600; padding: 4px 12px; border-radius: 20px; }
+        .blc-conv-chip-bits { background: #ede9fe; color: #7c3aed; }
+        .blc-conv-chip-octets { background: #fef3c7; color: #d97706; }
+        .blc-conv-chip-zone { background: #f0fdf4; color: #16a34a; }
+        .blc-conv-lamps-row { display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; margin-bottom: 20px; }
+        .blc-conv-lamp { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+        .blc-conv-lamp-weight { font-size: 0.58rem; font-weight: 600; color: #94a3b8; white-space: nowrap; }
+        .blc-conv-lamp-bulb {
+            width: 36px; height: 36px; border-radius: 50%; background: #e2e8f0;
+            border: 2.5px solid #cbd5e1; transition: all 0.3s ease; position: relative;
+        }
+        .blc-conv-lamp-bulb.blc-on {
+            background: #fbbf24; border-color: #f59e0b;
+            box-shadow: 0 0 14px rgba(251,191,36,0.55), 0 0 30px rgba(251,191,36,0.15);
+        }
+        .blc-conv-lamp-bulb.blc-on::after {
+            content: ''; position: absolute; inset: 5px; border-radius: 50%;
+            background: radial-gradient(circle, #fff 0%, transparent 70%); opacity: 0.5;
+        }
+        .blc-conv-lamp-bit { font-size: 0.7rem; font-weight: 700; color: #94a3b8; }
+        .blc-conv-lamp-bit.blc-on { color: #f59e0b; }
+        .blc-conv-lamp-group-sep { width: 1px; height: 60px; background: #c7d2fe; margin: 0 4px; align-self: center; border-radius: 1px; }
+        .blc-conv-binary-text {
+            text-align: center; font-family: 'Courier New', monospace; font-size: 1.3rem; font-weight: 700;
+            color: #1e1b4b; letter-spacing: 0.06em; padding: 14px; background: #f8f7ff;
+            border-radius: 12px; border: 1px solid #e0e7ff; word-break: break-all; line-height: 1.6;
+        }
+        .blc-conv-binary-text .blc-conv-bit-highlight { color: #f59e0b; }
+        .blc-conv-explain {
+            background: #fff; border-radius: 16px; padding: 22px 26px; line-height: 1.7;
+            color: #475569; font-size: 0.88rem; box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+        }
+        .blc-conv-explain strong { color: #4f46e5; }
+        .blc-conv-steps {
+            margin-top: 12px; padding: 14px 18px; background: #f8f7ff; border-radius: 12px;
+            border-left: 3px solid #8b5cf6; font-family: 'Courier New', monospace;
+            font-size: 0.82rem; line-height: 1.8; color: #475569;
+        }
+        .blc-conv-steps .blc-step-op { color: #7c3aed; font-weight: 700; }
+        .blc-conv-steps .blc-step-val { color: #f59e0b; font-weight: 700; }
+        .blc-conv-empty { text-align: center; padding: 28px; color: #cbd5e1; font-size: 0.9rem; }
+        .blc-conv-empty i { font-size: 2rem; display: block; margin-bottom: 10px; }
+
+        @media (max-width: 640px) {
+            .blc-header { padding: 10px 14px; }
+            .blc-screen { padding: 24px 14px 40px; }
+            .blc-title { font-size: 1.5rem; }
+            .blc-lamp-bulb { width: 36px; height: 36px; }
+            .blc-lamp-weight { font-size: 0.6rem; }
+            .blc-lamps-row { gap: 4px; }
+            .blc-question-value { font-size: 2.2rem; }
+            .blc-options-grid { grid-template-columns: 1fr; }
+            .blc-memory-grid { grid-template-columns: repeat(2, 1fr); max-width: 280px; }
+            .blc-levels-grid { grid-template-columns: 1fr; }
+            .blc-progress-bar { width: 80px; }
+            .blc-stats { gap: 10px; }
+            .blc-conv-lamp-bulb { width: 28px; height: 28px; }
+            .blc-conv-lamp-weight { font-size: 0.5rem; }
+            .blc-conv-lamp-bit { font-size: 0.6rem; }
+            .blc-conv-lamp-group-sep { height: 46px; }
+            .blc-conv-binary-text { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="binary-learning-container">
+
+        <div class="blc-header">
+            <div class="blc-logo">
+                <i class="fas fa-microchip"></i>
+                <span>Traduis en Binaire</span>
+            </div>
+            <div class="blc-stats">
+                <div class="blc-score">
+                    <i class="fas fa-star"></i>
+                    <span id="blc-score-val">0</span>
+                </div>
+                <div class="blc-progress-wrap">
+                    <div class="blc-progress-bar">
+                        <div class="blc-progress-fill" id="blc-progress-fill"></div>
+                    </div>
+                    <span id="blc-progress-text">0/2</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- INTRO -->
+        <div class="blc-screen blc-active" id="blc-screen-intro">
+            <div class="blc-intro-hero">
+                <h1 class="blc-title">Traduis en Binaire</h1>
+                <p class="blc-subtitle">Découvre le langage que comprend ton ordinateur</p>
+            </div>
+            <div class="blc-lamps-section">
+                <div class="blc-lamps-title"><i class="fas fa-lightbulb"></i> &nbsp;Interrupteurs de l'ordinateur</div>
+                <div class="blc-lamps-subtitle">Clique sur les lampes pour les allumer / éteindre</div>
+                <div class="blc-lamps-row" id="blc-lamps-row"></div>
+                <div class="blc-lamp-result">Valeur décimale : <strong id="blc-lamp-decimal">0</strong></div>
+                <div class="blc-lamp-demo-label" id="blc-lamp-demo-label"></div>
+            </div>
+            <div class="blc-intro-text">
+                <p>L'ordinateur comprend <strong>uniquement deux états</strong> :</p>
+                <div class="blc-onoff-badges">
+                    <div class="blc-badge blc-badge-off"><span class="blc-badge-dot blc-badge-dot-off"></span> 0 = Éteint (OFF)</div>
+                    <div class="blc-badge blc-badge-on"><span class="blc-badge-dot blc-badge-dot-on"></span> 1 = Allumé (ON)</div>
+                </div>
+                <p style="margin-top:12px">Ces deux valeurs, <strong>0</strong> et <strong>1</strong>, sont appelées des <strong>bits</strong>. En les combinant, on peut représenter <strong>n'importe quelle information</strong> : des nombres, des lettres, des images, des sons…</p>
+            </div>
+            <div class="blc-btn-center">
+                <button class="blc-btn blc-btn-primary" onclick="blcShowScreen('units')">Comprendre les unités <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- UNITÉS -->
+        <div class="blc-screen" id="blc-screen-units">
+            <h2 class="blc-title">Les Unités de Mesure</h2>
+            <p class="blc-subtitle">Comment on mesure l'information en informatique</p>
+            <div class="blc-unit-chain">
+                <div class="blc-chain-node">bit</div><i class="fas fa-arrow-right blc-chain-arrow"></i>
+                <div class="blc-chain-node">octet</div><i class="fas fa-arrow-right blc-chain-arrow"></i>
+                <div class="blc-chain-node">Ko</div><i class="fas fa-arrow-right blc-chain-arrow"></i>
+                <div class="blc-chain-node">Mo</div><i class="fas fa-arrow-right blc-chain-arrow"></i>
+                <div class="blc-chain-node">Go</div>
+            </div>
+            <div class="blc-units-grid" id="blc-units-grid"></div>
+            <div class="blc-btn-center">
+                <button class="blc-btn blc-btn-secondary" onclick="blcShowScreen('intro')"><i class="fas fa-arrow-left"></i> Retour</button>
+                <button class="blc-btn blc-btn-primary" onclick="blcShowScreen('levels')">Commencer à jouer <i class="fas fa-gamepad"></i></button>
+            </div>
+        </div>
+
+        <!-- NIVEAUX -->
+        <div class="blc-screen" id="blc-screen-levels">
+            <h2 class="blc-title">Choisis ton Niveau</h2>
+            <p class="blc-subtitle">Chaque niveau t'apprend une nouvelle compétence</p>
+            <div class="blc-levels-grid">
+                <div class="blc-level-card" onclick="blcStartLevel(1)" id="blc-level-card-1">
+                    <div class="blc-level-icon blc-level-icon-1"><i class="fas fa-hashtag"></i></div>
+                    <div class="blc-level-num">Niveau 1</div>
+                    <div class="blc-level-name">Nombres en binaire</div>
+                    <div class="blc-level-desc">Trouve l'écriture binaire de nombres simples</div>
+                    <div class="blc-level-diff"><i class="fas fa-star blc-filled"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                </div>
+                <div class="blc-level-card" onclick="blcStartLevel(4)" id="blc-level-card-4">
+                    <div class="blc-level-icon blc-level-icon-4"><i class="fas fa-brain"></i></div>
+                    <div class="blc-level-num">Niveau 2</div>
+                    <div class="blc-level-name">Jeu de mémoire</div>
+                    <div class="blc-level-desc">Associe chaque unité à sa définition</div>
+                    <div class="blc-level-diff"><i class="fas fa-star blc-filled"></i><i class="fas fa-star blc-filled"></i><i class="fas fa-star blc-filled"></i></div>
+                </div>
+            </div>
+            <div class="blc-levels-links">
+                <a href="javascript:void(0)" onclick="blcShowScreen('converter')"><i class="fas fa-calculator"></i> Convertisseur de grands nombres</a>
+            </div>
+            <div class="blc-btn-center">
+                <button class="blc-btn blc-btn-secondary" onclick="blcShowScreen('units')"><i class="fas fa-arrow-left"></i> Retour</button>
+            </div>
+        </div>
+
+        <!-- JEU -->
+        <div class="blc-screen" id="blc-screen-game">
+            <div class="blc-game-header">
+                <div class="blc-game-level-name" id="blc-game-level-name"></div>
+                <div class="blc-game-counter" id="blc-game-counter"></div>
+            </div>
+            <div id="blc-game-content"></div>
+            <div class="blc-btn-center" style="margin-top:20px">
+                <button class="blc-btn blc-btn-secondary" onclick="blcShowScreen('levels')"><i class="fas fa-times"></i> Quitter</button>
+            </div>
+        </div>
+
+        <!-- RÉSULTAT -->
+        <div class="blc-screen" id="blc-screen-result">
+            <div class="blc-result-card" id="blc-result-card"></div>
+            <div class="blc-btn-center" id="blc-result-buttons"></div>
+        </div>
+
+        <!-- CONVERTISSEUR -->
+        <div class="blc-screen" id="blc-screen-converter">
+            <h2 class="blc-title">Convertisseur Interactif</h2>
+            <p class="blc-subtitle">Entre un nombre et observe sa conversion — même au-delà de 255 !</p>
+            <div class="blc-conv-input-area">
+                <div class="blc-conv-input-wrap">
+                    <label for="blc-conv-input"><i class="fas fa-keyboard"></i> &nbsp;Nombre décimal :</label>
+                    <input type="text" class="blc-conv-input" id="blc-conv-input" placeholder="Ex : 300, 1000, 65535..." inputmode="numeric" autocomplete="off">
+                    <div class="blc-conv-error-msg" id="blc-conv-error"></div>
+                </div>
+                <div class="blc-conv-examples">
+                    <span style="font-size:0.78rem;color:#94a3b8;font-weight:500;">Essayer :</span>
+                    <button class="blc-conv-ex-btn" onclick="blcConvSet(5)">5</button>
+                    <button class="blc-conv-ex-btn" onclick="blcConvSet(42)">42</button>
+                    <button class="blc-conv-ex-btn" onclick="blcConvSet(255)">255</button>
+                    <button class="blc-conv-ex-btn" onclick="blcConvSet(300)">300</button>
+                    <button class="blc-conv-ex-btn" onclick="blcConvSet(1000)">1 000</button>
+                    <button class="blc-conv-ex-btn" onclick="blcConvSet(65535)">65 535</button>
+                    <button class="blc-conv-ex-btn" onclick="blcConvSet(100000)">100 000</button>
+                </div>
+            </div>
+            <div class="blc-conv-result-area" id="blc-conv-result">
+                <div class="blc-conv-empty"><i class="fas fa-arrow-up"></i>Entre un nombre ci-dessus pour voir le résultat</div>
+            </div>
+            <div class="blc-conv-explain">
+                <p><strong>Comment ça marche au-delà de 255 ?</strong> Avec 8 bits on va de 0 à 255. Pour les grands nombres, l'ordinateur ajoute simplement <strong>des bits supplémentaires</strong>. Chaque bit en plus double la capacité :</p>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0;">
+                    <span style="font-size:0.8rem;background:#ede9fe;color:#7c3aed;padding:5px 12px;border-radius:8px;font-weight:600;">8 bits → 255</span>
+                    <span style="font-size:0.8rem;background:#ede9fe;color:#7c3aed;padding:5px 12px;border-radius:8px;font-weight:600;">16 bits → 65 535</span>
+                    <span style="font-size:0.8rem;background:#ede9fe;color:#7c3aed;padding:5px 12px;border-radius:8px;font-weight:600;">32 bits → 4 294 967 295</span>
+                </div>
+                <p>Le principe reste le <strong>même</strong> : on décompose le nombre en puissances de 2, de la plus grande à la plus petite.</p>
+            </div>
+            <div class="blc-btn-center">
+                <button class="blc-btn blc-btn-secondary" onclick="blcShowScreen('levels')"><i class="fas fa-arrow-left"></i> Retour aux niveaux</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+    const blc = {
+        score: 0,
+        completedLevels: [],
+        currentLevel: null,
+        questionIndex: 0,
+        levelScore: 0,
+        memCards: [],
+        memFlipped: [],
+        memMatched: [],
+        memAttempts: 0,
+        memScore: 0,
+        lampValues: [0,0,0,0,0,0,0,0],
+        audioCtx: null,
+    };
+
+    /* SONS */
+    function blcGetAudio() {
+        if (!blc.audioCtx) blc.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        return blc.audioCtx;
+    }
+    function blcPlaySound(type) {
+        try {
+            const ctx = blcGetAudio();
+            if (ctx.state === 'suspended') ctx.resume();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            const t = ctx.currentTime;
+            switch(type) {
+                case 'correct':
+                    osc.type='sine'; osc.frequency.setValueAtTime(523,t); osc.frequency.setValueAtTime(659,t+0.08); osc.frequency.setValueAtTime(784,t+0.16);
+                    gain.gain.setValueAtTime(0.2,t); gain.gain.exponentialRampToValueAtTime(0.01,t+0.35); osc.start(t); osc.stop(t+0.35); break;
+                case 'wrong':
+                    osc.type='square'; osc.frequency.setValueAtTime(200,t); osc.frequency.setValueAtTime(150,t+0.12);
+                    gain.gain.setValueAtTime(0.12,t); gain.gain.exponentialRampToValueAtTime(0.01,t+0.3); osc.start(t); osc.stop(t+0.3); break;
+                case 'flip':
+                    osc.type='sine'; osc.frequency.setValueAtTime(800,t); gain.gain.setValueAtTime(0.08,t); gain.gain.exponentialRampToValueAtTime(0.01,t+0.08); osc.start(t); osc.stop(t+0.08); break;
+                case 'match':
+                    osc.type='sine'; osc.frequency.setValueAtTime(600,t); osc.frequency.setValueAtTime(900,t+0.1);
+                    gain.gain.setValueAtTime(0.15,t); gain.gain.exponentialRampToValueAtTime(0.01,t+0.25); osc.start(t); osc.stop(t+0.25); break;
+                case 'complete':
+                    osc.type='sine'; osc.frequency.setValueAtTime(523,t); osc.frequency.setValueAtTime(659,t+0.12); osc.frequency.setValueAtTime(784,t+0.24); osc.frequency.setValueAtTime(1047,t+0.36);
+                    gain.gain.setValueAtTime(0.2,t); gain.gain.exponentialRampToValueAtTime(0.01,t+0.6); osc.start(t); osc.stop(t+0.6); break;
+                case 'click':
+                    osc.type='sine'; osc.frequency.setValueAtTime(600,t); gain.gain.setValueAtTime(0.06,t); gain.gain.exponentialRampToValueAtTime(0.01,t+0.05); osc.start(t); osc.stop(t+0.05); break;
+            }
+        } catch(e) {}
+    }
+
+    /* NAVIGATION */
+    function blcShowScreen(name) {
+        blcPlaySound('click');
+        document.querySelectorAll('.blc-screen').forEach(s => s.classList.remove('blc-active'));
+        const el = document.getElementById('blc-screen-' + name);
+        if (el) el.classList.add('blc-active');
+    }
+
+    /* SCORE & PROGRESSION */
+    function blcUpdateScore(pts) {
+        blc.score += pts;
+        const el = document.getElementById('blc-score-val');
+        el.textContent = blc.score;
+        el.style.transform = 'scale(1.3)';
+        setTimeout(() => el.style.transition = 'transform 0.3s', 0);
+        setTimeout(() => el.style.transform = 'scale(1)', 300);
+    }
+    function blcUpdateProgress() {
+        const done = blc.completedLevels.length;
+        document.getElementById('blc-progress-fill').style.width = (done / 2 * 100) + '%';
+        document.getElementById('blc-progress-text').textContent = done + '/2';
+        [1, 4].forEach(lv => {
+            const card = document.getElementById('blc-level-card-' + lv);
+            if (!card) return;
+            if (blc.completedLevels.includes(lv) && !card.querySelector('.blc-level-completed-badge')) {
+                const badge = document.createElement('div');
+                badge.className = 'blc-level-completed-badge';
+                badge.innerHTML = '<i class="fas fa-check"></i>';
+                card.appendChild(badge);
+                card.classList.add('blc-completed');
+            }
+        });
+    }
+
+    /* LAMPES (INTRO) */
+    function blcInitLamps() {
+        const row = document.getElementById('blc-lamps-row');
+        const weights = [128,64,32,16,8,4,2,1];
+        row.innerHTML = '';
+        weights.forEach((w, i) => {
+            const lamp = document.createElement('div');
+            lamp.className = 'blc-lamp';
+            lamp.innerHTML = '<div class="blc-lamp-weight">'+w+'</div><div class="blc-lamp-bulb" id="blc-bulb-'+i+'"></div><div class="blc-lamp-bit" id="blc-bit-'+i+'">0</div>';
+            lamp.addEventListener('click', () => { blc.lampValues[i] = blc.lampValues[i] ? 0 : 1; blcRenderLamps(); blcPlaySound('click'); });
+            row.appendChild(lamp);
+        });
+        const demos = [
+            {v:[0,0,0,0,0,1,0,1], l:'Démonstration : 5 = 00000101'},
+            {v:[0,0,0,0,1,1,0,1], l:'Démonstration : 13 = 00001101'},
+            {v:[0,0,1,0,1,0,1,0], l:'Démonstration : 42 = 00101010'},
+            {v:[1,1,1,1,1,1,1,1], l:'Démonstration : 255 = 11111111'},
+        ];
+        let step = 0;
+        const label = document.getElementById('blc-lamp-demo-label');
+        (function run() {
+            if (step < demos.length) { label.textContent = demos[step].l; blc.lampValues = [...demos[step].v]; blcRenderLamps(); step++; setTimeout(run, 1200); }
+            else { label.textContent = 'Clique sur les lampes pour expérimenter !'; blc.lampValues = [0,0,0,0,0,0,0,0]; blcRenderLamps(); }
+        })();
+    }
+    function blcRenderLamps() {
+        let decimal = 0;
+        const weights = [128,64,32,16,8,4,2,1];
+        blc.lampValues.forEach((v, i) => {
+            const bulb = document.getElementById('blc-bulb-'+i);
+            const bit = document.getElementById('blc-bit-'+i);
+            bulb.classList.toggle('blc-on', !!v); bit.classList.toggle('blc-on', !!v); bit.textContent = v ? '1' : '0';
+            if (v) decimal += weights[i];
+        });
+        document.getElementById('blc-lamp-decimal').textContent = decimal;
+    }
+
+    /* UNITÉS */
+    function blcInitUnits() {
+        const units = [
+            { icon:'fa-circle-dot', cls:'blc-unit-icon-1', name:'Bit', def:'La plus petite unité d\'information', detail:'Un bit peut valoir <strong>0</strong> ou <strong>1</strong>. C\'est la brique fondamentale de tout système numérique. Le mot "bit" vient de <em>binary digit</em>.' },
+            { icon:'fa-cubes', cls:'blc-unit-icon-2', name:'Octet (Byte)', def:'8 bits regroupés ensemble', detail:'Un octet = <strong>8 bits</strong>. Il peut représenter 256 valeurs différentes (de 0 à 255). C\'est suffisant pour coder un caractère.' },
+            { icon:'fa-file', cls:'blc-unit-icon-3', name:'Kilooctet (Ko)', def:'1024 octets', detail:'1 Ko = <strong>1024 octets</strong> (et non 1000 !). On utilise 1024 car c\'est une puissance de 2 (2¹⁰).' },
+            { icon:'fa-photo-film', cls:'blc-unit-icon-4', name:'Mégaoctet (Mo)', def:'1024 Ko = 1 048 576 octets', detail:'1 Mo = <strong>1024 Ko</strong>. Une photo de bonne qualité fait quelques Mo. Une chanson MP3 fait environ 3-5 Mo.' },
+            { icon:'fa-database', cls:'blc-unit-icon-5', name:'Gigaoctet (Go)', def:'1024 Mo = 1 073 741 824 octets', detail:'1 Go = <strong>1024 Mo</strong>. Un film HD fait environ 2-4 Go. Un smartphone courant a 64 à 256 Go de stockage.' }
+        ];
+        const grid = document.getElementById('blc-units-grid');
+        grid.innerHTML = '';
+        units.forEach(u => {
+            const card = document.createElement('div');
+            card.className = 'blc-unit-card';
+            card.innerHTML = '<div class="blc-unit-icon '+u.cls+'"><i class="fas '+u.icon+'"></i></div><div class="blc-unit-info"><div class="blc-unit-name">'+u.name+'</div><div class="blc-unit-def">'+u.def+'</div><div class="blc-unit-detail">'+u.detail+'</div></div><div class="blc-unit-arrow"><i class="fas fa-chevron-right"></i></div>';
+            card.addEventListener('click', () => { blcPlaySound('click'); card.classList.toggle('blc-expanded'); });
+            grid.appendChild(card);
+        });
+    }
+
+    /* DONNÉES NIVEAUX */
+    const blcQuestions = {
+        1: [
+            { q:'3', a:'011', opts:['011','101','110','111'] },
+            { q:'5', a:'101', opts:['100','101','110','111'] },
+            { q:'7', a:'111', opts:['110','111','1000','1011'] },
+            { q:'10', a:'1010', opts:['1010','1100','1001','1110'] },
+            { q:'12', a:'1100', opts:['1100','1011','1110','1001'] },
+            { q:'15', a:'1111', opts:['1101','1110','1111','1000'] },
+        ]
+    };
+    const blcMemoryPairs = [
+        { a:'bit', b:'0 ou 1' }, { a:'octet', b:'8 bits' },
+        { a:'Ko', b:'1024 octets' }, { a:'Mo', b:'1024 Ko' }, { a:'Go', b:'1024 Mo' },
+    ];
+
+    /* DÉMARRER NIVEAU */
+    function blcStartLevel(level) {
+        blc.currentLevel = level; blc.questionIndex = 0; blc.levelScore = 0;
+        document.getElementById('blc-game-level-name').textContent = {1:'Niveau 1 — Nombres en binaire',4:'Niveau 2 — Jeu de mémoire'}[level]||'';
+        if (level === 1) blcShowQuestion(); else if (level === 4) blcInitMemory();
+        blcShowScreen('game');
+    }
+
+    /* NIVEAU 1 — QUESTIONS */
+    function blcShowQuestion() {
+        const qs = blcQuestions[1];
+        if (blc.questionIndex >= qs.length) { blcEndLevel(); return; }
+        const q = qs[blc.questionIndex];
+        document.getElementById('blc-game-counter').textContent = 'Question '+(blc.questionIndex+1)+' / '+qs.length;
+        const letters = ['A','B','C','D'];
+        let optsHTML = '';
+        [...q.opts].sort(() => Math.random()-0.5).forEach((opt, i) => {
+            optsHTML += '<button class="blc-option-btn" onclick="blcHandleAnswer(this,\''+opt+'\',\''+q.a+'\')"><span class="blc-option-letter">'+letters[i]+'</span>'+opt+'</button>';
+        });
+        document.getElementById('blc-game-content').innerHTML =
+            '<div class="blc-question-box"><div class="blc-question-label">Quel est le binaire de ce nombre ?</div><div class="blc-question-value">'+q.q+'</div><div class="blc-question-hint"><i class="fas fa-lightbulb"></i> Pense aux puissances de 2 !</div></div><div class="blc-options-grid">'+optsHTML+'</div>';
+    }
+    function blcHandleAnswer(btnEl, selected, correct) {
+        const allBtns = document.querySelectorAll('.blc-option-btn');
+        if ([...allBtns].some(b => b.classList.contains('blc-correct')||b.classList.contains('blc-wrong'))) return;
+        allBtns.forEach(b => b.classList.add('blc-disabled'));
+        if (selected === correct) {
+            btnEl.classList.add('blc-correct'); blcUpdateScore(10); blc.levelScore += 10; blcPlaySound('correct');
+        } else {
+            btnEl.classList.add('blc-wrong'); blcPlaySound('wrong');
+            allBtns.forEach(b => { if (b.textContent.trim().slice(1).trim() === correct) b.classList.add('blc-correct'); });
+        }
+        setTimeout(() => { blc.questionIndex++; blcShowQuestion(); }, 1200);
+    }
+
+    /* NIVEAU 2 — MÉMOIRE */
+    function blcInitMemory() {
+        blc.memFlipped = []; blc.memMatched = []; blc.memAttempts = 0; blc.memScore = 0;
+        let cards = [];
+        blcMemoryPairs.forEach((p, i) => { cards.push({id:i, text:p.a, pairId:i}); cards.push({id:i, text:p.b, pairId:i}); });
+        for (let j = cards.length-1; j > 0; j--) { const k = Math.floor(Math.random()*(j+1)); [cards[j],cards[k]]=[cards[k],cards[j]]; }
+        blc.memCards = cards; blcRenderMemory();
+    }
+    function blcRenderMemory() {
+        const total = blcMemoryPairs.length;
+        document.getElementById('blc-game-counter').textContent = 'Paires trouvées : '+blc.memMatched.length+' / '+total;
+        let html = '<div class="blc-memory-grid">';
+        blc.memCards.forEach((c, i) => {
+            const fl = blc.memFlipped.includes(i), mt = blc.memMatched.includes(c.pairId);
+            let cls = 'blc-memory-card'; if (fl||mt) cls+=' blc-flipped'; if (mt) cls+=' blc-matched';
+            html += '<div class="'+cls+'" onclick="blcFlipCard('+i+')" id="blc-mem-'+i+'"><div class="blc-memory-inner"><div class="blc-memory-face blc-memory-front"><i class="fas fa-question"></i></div><div class="blc-memory-face blc-memory-back">'+c.text+'</div></div></div>';
+        });
+        html += '</div><div class="blc-memory-stats">Essais : <span id="blc-mem-attempts">0</span></div>';
+        document.getElementById('blc-game-content').innerHTML = html;
+    }
+    function blcFlipCard(index) {
+        if (blc.memFlipped.length >= 2) return;
+        if (blc.memFlipped.includes(index)) return;
+        if (blc.memMatched.includes(blc.memCards[index].pairId)) return;
+        blc.memFlipped.push(index); blcPlaySound('flip');
+        document.getElementById('blc-mem-'+index).classList.add('blc-flipped');
+        if (blc.memFlipped.length === 2) {
+            blc.memAttempts++;
+            const att = document.getElementById('blc-mem-attempts'); if (att) att.textContent = blc.memAttempts;
+            const [i1,i2] = blc.memFlipped;
+            const c1 = blc.memCards[i1], c2 = blc.memCards[i2];
+            if (c1.pairId === c2.pairId) {
+                blc.memMatched.push(c1.pairId); blcPlaySound('match');
+                setTimeout(() => { document.getElementById('blc-mem-'+i1).classList.add('blc-matched'); document.getElementById('blc-mem-'+i2).classList.add('blc-matched'); }, 300);
+                let pts = 20; if (blc.memAttempts > blc.memMatched.length*1.5) pts=10; else if (blc.memAttempts > blc.memMatched.length) pts=15;
+                blcUpdateScore(pts); blc.memScore += pts; blc.memFlipped = [];
+                if (blc.memMatched.length === blcMemoryPairs.length) setTimeout(() => blcEndLevel(), 800);
+            } else {
+                setTimeout(() => { document.getElementById('blc-mem-'+i1).classList.remove('blc-flipped'); document.getElementById('blc-mem-'+i2).classList.remove('blc-flipped'); blc.memFlipped = []; }, 800);
+            }
+        }
+    }
+
+    /* RÉSULTAT */
+    function blcEndLevel() {
+        blcPlaySound('complete');
+        const lv = blc.currentLevel, maxS = {1:60,4:100}[lv];
+        const scored = lv===4 ? blc.memScore : blc.levelScore;
+        const pct = Math.round(scored/maxS*100);
+        let stars = 1; if (pct>=90) stars=3; else if (pct>=60) stars=2;
+        const msgs = {3:'Excellent ! Tu maîtrises parfaitement ce niveau !',2:'Bravo ! Bonne compréhension, encore un petit effort !',1:'Continue de t\'entraîner, tu progresses !'};
+        const icons = {3:'&#127942;',2:'&#127775;',1:'&#128214;'};
+        let starsHTML = ''; for (let i=0;i<3;i++) starsHTML += '<i class="fas fa-star '+(i<stars?'blc-earned':'')+'"></i>';
+        document.getElementById('blc-result-card').innerHTML = '<div class="blc-result-icon">'+icons[stars]+'</div><div class="blc-result-score">'+scored+'</div><div class="blc-result-label">points sur '+maxS+'</div><div class="blc-result-stars">'+starsHTML+'</div><div class="blc-result-msg">'+msgs[stars]+'</div>';
+        if (!blc.completedLevels.includes(lv)) { blc.completedLevels.push(lv); blcUpdateProgress(); }
+        let btns = '<button class="blc-btn blc-btn-secondary" onclick="blcStartLevel('+lv+')"><i class="fas fa-redo"></i> Rejouer</button>';
+        const order=[1,4], idx=order.indexOf(lv), next=order[idx+1];
+        if (next) btns += '<button class="blc-btn blc-btn-primary" onclick="blcStartLevel('+next+')">Niveau suivant <i class="fas fa-arrow-right"></i></button>';
+        else if (blc.completedLevels.length===2) btns += '<button class="blc-btn blc-btn-success" onclick="blcShowScreen(\'converter\')"><i class="fas fa-calculator"></i> Essayer le convertisseur</button>';
+        btns += '<button class="blc-btn blc-btn-secondary" onclick="blcShowScreen(\'levels\')"><i class="fas fa-th"></i> Menu</button>';
+        document.getElementById('blc-result-buttons').innerHTML = btns;
+        blcShowScreen('result');
+    }
+
+    /* CONVERTISSEUR */
+    function blcConvSet(val) {
+        const input = document.getElementById('blc-conv-input');
+        input.value = val; input.classList.remove('blc-error');
+        document.getElementById('blc-conv-error').textContent = '';
+        blcPlaySound('click'); blcConvCalculate(val);
+    }
+    document.getElementById('blc-conv-input').addEventListener('input', function() {
+        const raw = this.value.replace(/\s/g, '');
+        this.classList.remove('blc-error');
+        document.getElementById('blc-conv-error').textContent = '';
+        if (raw === '') { document.getElementById('blc-conv-result').innerHTML = '<div class="blc-conv-empty"><i class="fas fa-arrow-up"></i>Entre un nombre ci-dessus pour voir le résultat</div>'; return; }
+        if (!/^\d+$/.test(raw)) { this.classList.add('blc-error'); document.getElementById('blc-conv-error').textContent = 'Entre uniquement des chiffres (0-9).'; document.getElementById('blc-conv-result').innerHTML = ''; return; }
+        const num = parseInt(raw, 10);
+        if (num > 4294967295) { this.classList.add('blc-error'); document.getElementById('blc-conv-error').textContent = 'Nombre trop grand ! Maximum : 4 294 967 295 (32 bits).'; document.getElementById('blc-conv-result').innerHTML = ''; return; }
+        blcConvCalculate(num);
+    });
+    function blcConvCalculate(num) {
+        if (num === 0) {
+            document.getElementById('blc-conv-result').innerHTML =
+                '<div class="blc-conv-result-header"><div class="blc-conv-result-title">Résultat</div><div class="blc-conv-bits-info"><span class="blc-conv-info-chip blc-conv-chip-bits">1 bit</span><span class="blc-conv-info-chip blc-conv-chip-octets">0 octet</span></div></div>' +
+                '<div class="blc-conv-lamps-row"><div class="blc-conv-lamp"><div class="blc-conv-lamp-weight">1</div><div class="blc-conv-lamp-bulb"></div><div class="blc-conv-lamp-bit">0</div></div></div>' +
+                '<div class="blc-conv-binary-text">0</div>';
+            return;
+        }
+        const binaryStr = num.toString(2);
+        const numBits = binaryStr.length;
+        const displayBits = Math.ceil(numBits / 8) * 8;
+        const paddedBinary = binaryStr.padStart(displayBits, '0');
+        const numOctets = Math.ceil(numBits / 8);
+        let zone = '';
+        if (numBits <= 8) zone = '1 octet suffit';
+        else if (numBits <= 16) zone = '2 octets (16 bits)';
+        else if (numBits <= 32) zone = '4 octets (32 bits)';
+        let lampsHTML = '';
+        const bits = paddedBinary.split('');
+        const totalDisplayBits = bits.length;
+        for (let i = 0; i < totalDisplayBits; i++) {
+            if (i > 0 && i % 8 === 0) lampsHTML += '<div class="blc-conv-lamp-group-sep"></div>';
+            const weight = Math.pow(2, totalDisplayBits - 1 - i);
+            const isOn = bits[i] === '1';
+            let weightStr;
+            if (weight >= 1000000) weightStr = (weight/1000000).toFixed(0) + 'M';
+            else if (weight >= 1000) weightStr = (weight/1000).toFixed(0) + 'k';
+            else weightStr = weight;
+            lampsHTML += '<div class="blc-conv-lamp"><div class="blc-conv-lamp-weight">'+weightStr+'</div><div class="blc-conv-lamp-bulb'+(isOn?' blc-on':'')+'"></div><div class="blc-conv-lamp-bit'+(isOn?' blc-on':'')+'">'+bits[i]+'</div></div>';
+        }
+        let coloredBinary = '';
+        for (let i = 0; i < paddedBinary.length; i++) {
+            if (i > 0 && i % 8 === 0) coloredBinary += ' ';
+            coloredBinary += paddedBinary[i]==='1' ? '<span class="blc-conv-bit-highlight">1</span>' : '0';
+        }
+        let stepsHTML = blcConvSteps(num);
+        document.getElementById('blc-conv-result').innerHTML =
+            '<div class="blc-conv-result-header"><div class="blc-conv-result-title"><i class="fas fa-check-circle" style="color:#22c55e"></i> '+num.toLocaleString('fr-FR')+' en binaire</div><div class="blc-conv-bits-info"><span class="blc-conv-info-chip blc-conv-chip-bits">'+numBits+' bit'+(numBits>1?'s':'')+'</span><span class="blc-conv-info-chip blc-conv-chip-octets">'+numOctets+' octet'+(numOctets>1?'s':'')+'</span>'+(zone?'<span class="blc-conv-info-chip blc-conv-chip-zone">'+zone+'</span>':'')+'</div></div>' +
+            '<div class="blc-conv-lamps-row">'+lampsHTML+'</div>' +
+            '<div class="blc-conv-binary-text">'+coloredBinary+'</div>' +
+            stepsHTML;
+    }
+    function blcConvSteps(num) {
+        if (num <= 0) return '';
+        let remaining = num, steps = [], power = 0;
+        while (Math.pow(2, power + 1) <= remaining) power++;
+        while (remaining > 0) {
+            const val = Math.pow(2, power);
+            steps.push({ val, remaining, result: remaining - val });
+            remaining -= val;
+            while (power > 0 && Math.pow(2, power) > remaining) power--;
+        }
+        let html = '<div class="blc-conv-steps">';
+        steps.forEach(s => {
+            html += '<div>'+s.remaining.toLocaleString('fr-FR')+' <span class="blc-step-op">-</span> '+s.val.toLocaleString('fr-FR')+' <span class="blc-step-op">=</span> <span class="blc-step-val">'+s.result.toLocaleString('fr-FR')+'</span></div>';
+        });
+        return html + '</div>';
+    }
+
+    /* INIT */
+    function blcInit() { blcInitLamps(); blcInitUnits(); blcUpdateProgress(); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', blcInit);
+    else blcInit();
+    </script>
+</body>
+</html>
